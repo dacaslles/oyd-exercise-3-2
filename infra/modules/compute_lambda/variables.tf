@@ -20,7 +20,7 @@ variable "architectures" {
   default     = ["arm64"]
 
   validation {
-    condition     = contains([["arm64"], ["x86_64"]], var.architectures)
+    condition     = length(var.architectures) == 1 && contains(["arm64", "x86_64"], var.architectures[0])
     error_message = "La arquitectura debe ser ['arm64'] o ['x86_64']."
   }
 }
