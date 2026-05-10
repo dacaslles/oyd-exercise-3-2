@@ -18,7 +18,7 @@ variable "architectures" {
   type        = list(string)
   description = "Arquitectura de ejecución de la Lambda (arm64 o x86_64)"
   default     = ["arm64"]
-  
+
   validation {
     condition     = contains([["arm64"], ["x86_64"]], var.architectures)
     error_message = "La arquitectura debe ser ['arm64'] o ['x86_64']."

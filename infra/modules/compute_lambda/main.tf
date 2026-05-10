@@ -30,9 +30,9 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
 resource "aws_lambda_function" "currency_converter" {
   # Nombre de la función basado en variables
   function_name = "${var.name}-${var.environment}"
-  
+
   # Rol de IAM creado en el paso anterior
-  role          = aws_iam_role.lambda_role.arn
+  role = aws_iam_role.lambda_role.arn
 
   # Configuración del paquete de código
   filename         = "${path.module}/../../../app/function.zip"
@@ -62,29 +62,29 @@ resource "aws_apigatewayv2_integration" "lambda_integration" {
   api_id           = aws_apigatewayv2_api.http_api.id
   integration_type = "AWS_PROXY"
   integration_uri  = aws_lambda_function.currency_converter.invoke_arn
-  
-  payload_format_version = "2.0" 
+
+  payload_format_version = "2.0"
 }
 
 # 6. Ruta para GET /rates
 resource "aws_apigatewayv2_route" "get_rates" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "GET /rates" 
+  route_key = "GET /rates"
   target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
 }
 
 # 7. Ruta para POST /convert
 resource "aws_apigatewayv2_route" "post_convert" {
   api_id    = aws_apigatewayv2_api.http_api.id
-  route_key = "POST /convert" 
+  route_key = "POST /convert"
   target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
 }
 
 # 8. Stage de despliegue
 resource "aws_apigatewayv2_stage" "default" {
   api_id      = aws_apigatewayv2_api.http_api.id
-  name        = "$default" 
-  auto_deploy = true 
+  name        = "$default"
+  auto_deploy = true
 }
 
 # 9. Permiso para que API Gateway invoque la Lambda
